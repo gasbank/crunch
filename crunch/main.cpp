@@ -127,7 +127,7 @@ static string GetFileName(const string& path)
     return name;
 }
 
-static void LoadBitmap(const string& prefix, const string& path)
+static void CrunchLoadBitmap(const string& prefix, const wstring& path)
 {
     if (optVerbose)
         cout << '\t' << PathToStr(path) << endl;
@@ -135,7 +135,7 @@ static void LoadBitmap(const string& prefix, const string& path)
     bitmaps.push_back(new Bitmap(PathToStr(path), prefix + GetFileName(PathToStr(path)), optPremultiply, optTrim));
 }
 
-static void LoadBitmaps(const string& root, const string& prefix)
+static void CrunchLoadBitmaps(const string& root, const string& prefix)
 {
     static string dot1 = ".";
     static string dot2 = "..";
@@ -151,10 +151,10 @@ static void LoadBitmaps(const string& root, const string& prefix)
         if (file.is_dir)
         {
             if (dot1 != PathToStr(file.name) && dot2 != PathToStr(file.name))
-                LoadBitmaps(PathToStr(file.path), prefix + PathToStr(file.name) + "/");
+                CrunchLoadBitmaps(PathToStr(file.path), prefix + PathToStr(file.name) + "/");
         }
         else if (PathToStr(file.extension) == "png")
-            LoadBitmap(prefix, file.path);
+            CrunchLoadBitmap(prefix, file.path);
         
         tinydir_next(&dir);
     }
@@ -340,9 +340,9 @@ int main(int argc, const char* argv[])
     for (size_t i = 0; i < inputs.size(); ++i)
     {
         if (inputs[i].rfind('.') != string::npos)
-            LoadBitmap("", inputs[i]);
+            CrunchLoadBitmap("", StrToPath(inputs[i]));
         else
-            LoadBitmaps(inputs[i], "");
+            CrunchLoadBitmaps(inputs[i], "");
     }
     
     //Sort the bitmaps by area
